@@ -18,5 +18,5 @@ bot.load_extension("jishaku")
 
 for cog in [cog[:-3] for cog in listdir("cogs") if cog.endswith(".py")]:
     bot.load_extension(f"cogs.{cog}")
-
+#test
 bot.run(TOKEN)
