@@ -46,6 +46,7 @@ class CCC(commands.Cog):
     
     @commands.command()
     async def ranking(self,ctx):
+        """集計したランキングを出します"""
         with open("data/data.json") as f:
             d = json.load(f)
         d = dict(sorted(d[str(ctx.guild.id)].items(),key=lambda x:x[1]["num"],reverse=True))
@@ -60,8 +61,25 @@ class CCC(commands.Cog):
           title="寄付ランキング",
           description="\n".join(["<@{}>\n寄付額:{}, 記録回数:{}".format(uid,num,count) for uid,num,count in zip(l,l2,l3)])
         ))
-        
-        
+    
+    @commands.command()
+    async def set_count(self,ctx,userid,target,num):
+        """引数:変更する項目(count or num),変更した後の値
+        一つ目の引数に指定した項目の値を二つ目引数に指定した値に設定します。
+        """
+        if target not in ["num","count"]:
+            await ctx.send("不明な引数")
+            return
+        with open("data/data.json","r") as f:
+            d = json.load(f)
+        try:
+            d[str(ctx.guild.id)][str(userid)][target] = int(num)
+        except:
+            await ctx.send("不明な引数")
+            return
+        with open("data/data.json","w") as f:
+            json.dump(d,f,indent=4)
+        await ctx.send("値を設定しました")
 
 def setup(bot):
     return bot.add_cog(CCC(bot))
