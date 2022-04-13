@@ -1,3 +1,5 @@
+from ast import alias
+from turtle import title
 import discord
 from discord.ext import commands
 
@@ -15,6 +17,8 @@ class CCC(commands.Cog):
         取得するのはトリガーに設定したメッセージまでで、遡ることのできる上限は300件です。
         !のついたメッセージは無視されます。
         """
+        if not ctx.author.guild_permissions.administrator:
+            return
         flag = "失敗"
         async for message in ctx.channel.history(limit=300):
             if "!" in message.content or message.author.bot:
@@ -67,6 +71,8 @@ class CCC(commands.Cog):
         """引数:変更する項目(count or num),変更した後の値
         一つ目の引数に指定した項目の値を二つ目引数に指定した値に設定します。
         """
+        if not ctx.author.guild_permissions.administrator:
+            return
         if target not in ["num","count"]:
             await ctx.send("不明な引数")
             return
@@ -80,6 +86,57 @@ class CCC(commands.Cog):
         with open("data/data.json","w") as f:
             json.dump(d,f,indent=4)
         await ctx.send("値を設定しました")
+        
+
+    @commands.command(aliases=["cc"])
+    async def count_control(self,ctx,userid,target,num):
+        """引数:変更する項目(count or num),変更した後の値
+        一つ目の引数に指定した項目の値に二つ目の引数に指定した値を足します。負の値も使えます。
+        """
+        if not ctx.author.guild_permissions.administrator:
+            return
+        if target not in ["num","count"]:
+            await ctx.send("不明な引数")
+            return
+        with open("data/data.json","r") as f:
+            d = json.load(f)
+        try:
+            d[str(ctx.guild.id)][str(userid)][target] += int(num)
+        except:
+            await ctx.send("不明な引数")
+            return
+        with open("data/data.json","w") as f:
+            json.dump(d,f,indent=4)
+        await ctx.send("値を設定しました")
+    
+    @commands.command()
+    async def show(self,ctx,userid):
+        try:
+            with open("data/data.json","r") as f:
+                d = json.load(f)
+            info = d[str(ctx.guild.id)][userid]
+            user = await self.bot.fetch_user(int(userid))
+            await ctx.send(embed=discord.Embed(
+                title=f"{user.name}の情報",
+                description=f"記録回数:{info['count']}\n寄付額:{info['num']}"
+                ))
+        except:
+            await ctx.send("不明な引数")
+    
+    @commands.command()
+    async def clear(self,ctx):
+        """実行可能:管理者権限のあるメンバー
+        実行されたサーバーの記録の全てを削除します。
+        """
+        if ctx.author.guild_permissions.administrator:
+            with open("data/data.json","r") as f:
+                d = json.load(f)
+            d[str(ctx.guild.id)] = {}
+            with open("data/data.json","w") as f:
+                json.dump(d,f,indent=4)
+            await ctx.send("処理を完了しました")
+            return
+        await ctx.send("管理者権限のあるメンバーだけが実行できます")
 
 def setup(bot):
     return bot.add_cog(CCC(bot))
