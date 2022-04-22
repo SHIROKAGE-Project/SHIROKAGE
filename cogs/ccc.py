@@ -5,6 +5,7 @@ import re
 import json
 
 class CCC(commands.Cog):
+    """仮想通貨機能"""
     def __init__(self,bot):
         self.bot = bot
     
