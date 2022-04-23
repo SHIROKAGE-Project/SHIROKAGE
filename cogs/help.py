@@ -10,16 +10,44 @@ class Help(commands.Cog):
     @commands.command()
     async def help(self,ctx,command=None):
         if command == None:
+
             def check(msg):
-                return int(msg) in range(len(self.cogdict))  and msg.author == ctx.author
+                return  msg.author == ctx.author and int(msg.content) in range(len(self.cogdict))
+
             cogpool = []
             for num,name in enumerate(self.cogdict.keys()):
-                cogpool.append(f"{num} : {name}  {self.cogdict[name].description}")
+                cogpool.append(f"{num} : `{name}`  {self.cogdict[name].description}")
             helpmsg = "\n".join(cogpool)
             await ctx.send(embed=discord.Embed(
                 title="HELP",
+                description="__詳細を確認したいカテゴリの番号を入力してください__\n\n"+helpmsg
+            ))
+            select = await self.bot.wait_for("message",check=check)
+
+            #select_cog(cogname,cogobj)
+            select_cog = list(self.cogdict.items())[int(select.content)]
+
+            cmdlist = select_cog[1].get_commands()
+            helpmsg = []
+            for num,cmd in enumerate(cmdlist):
+                helpmsg.append(f"{num} : `{cmd.name}`  {cmd.description}")
+            helpmsg = "\n".join(helpmsg)
+            await ctx.send(embed=discord.Embed(
+                title=f"{select_cog[0]}カテゴリのコマンドリスト",
                 description=helpmsg
             ))
+
+            def check1(msg):
+                return  msg.author == ctx.author and int(msg.content) in range(len(cmdlist))
+            
+            select = await self.bot.wait_for("message",check=check1)
+            
+            select_cmd = cmdlist[int(select.content)]
+            await ctx.send(embed=discord.Embed(
+                title=f"Help-{select_cmd.name}",
+                description=select_cmd.description
+            ))
+            
 
 def setup(bot):
     return bot.add_cog(Help(bot))
