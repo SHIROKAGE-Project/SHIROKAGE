@@ -11,7 +11,8 @@ class CCC(commands.Cog):
     
     @commands.command()
     async def ccc(self,ctx,message_id):
-        """引数:トリガーとするメッセージID
+        """集計します
+        引数:トリガーとするメッセージID
         実行チャンネル内で数字の含まれるメッセージを取得し、ユーザー別に取得回数と数値の合計を集計します。
         取得するのはトリガーに設定したメッセージまでで、遡ることのできる上限は300件です。
         !のついたメッセージは無視されます。
@@ -49,7 +50,7 @@ class CCC(commands.Cog):
     
     @commands.command()
     async def ranking(self,ctx):
-        """集計したランキングを出します"""
+        """集計したランキングを表示します"""
         with open("data/data.json") as f:
             d = json.load(f)
         d = dict(sorted(d[str(ctx.guild.id)].items(),key=lambda x:x[1]["num"],reverse=True))
@@ -67,7 +68,8 @@ class CCC(commands.Cog):
     
     @commands.command()
     async def set_count(self,ctx,userid,target,num):
-        """引数:変更する項目(count or num),変更した後の値
+        """個別に値を設定します
+        引数:変更する項目(count or num),変更した後の値
         一つ目の引数に指定した項目の値を二つ目引数に指定した値に設定します。
         """
         if not ctx.author.guild_permissions.administrator:
@@ -89,7 +91,8 @@ class CCC(commands.Cog):
 
     @commands.command(aliases=["cc"])
     async def count_control(self,ctx,userid,target,num):
-        """引数:変更する項目(count or num),変更した後の値
+        """現在の値から足し引きします
+        引数:変更する項目(count or num),変更した後の値
         一つ目の引数に指定した項目の値に二つ目の引数に指定した値を足します。負の値も使えます。
         """
         if not ctx.author.guild_permissions.administrator:
@@ -110,6 +113,7 @@ class CCC(commands.Cog):
     
     @commands.command()
     async def show(self,ctx,userid):
+        """個人の現在ポイントを表示します"""
         try:
             with open("data/data.json","r") as f:
                 d = json.load(f)
@@ -124,7 +128,8 @@ class CCC(commands.Cog):
     
     @commands.command()
     async def clear(self,ctx):
-        """実行可能:管理者権限のあるメンバー
+        """集計したデータを削除します
+        実行可能:管理者権限のあるメンバー
         実行されたサーバーの記録の全てを削除します。
         """
         if ctx.author.guild_permissions.administrator:
