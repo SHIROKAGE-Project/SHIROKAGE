@@ -31,10 +31,10 @@ class Help(commands.Cog):
             helpmsg = []
             for num,cmd in enumerate(cmdlist):
                 helpmsg.append(f"{num} : `{cmd.name}`  {cmd.description}")
-            helpmsg = "\n".join(helpmsg)
+            helpmsgl = "\n".join(helpmsg)
             await ctx.send(embed=discord.Embed(
                 title=f"{select_cog[0]}カテゴリのコマンドリスト",
-                description=helpmsg
+                description=helpmsgl
             ))
 
             def check1(msg):
@@ -45,7 +45,7 @@ class Help(commands.Cog):
             select_cmd = cmdlist[int(select.content)]
             await ctx.send(embed=discord.Embed(
                 title=f"Help-{select_cmd.name}",
-                description=select_cmd.description
+                description=select_cmd.help
             ))
             
 
