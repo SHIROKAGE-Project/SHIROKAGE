@@ -8,7 +8,11 @@ class Help(commands.Cog):
 
     @commands.command()
     async def help(self,ctx,command=None):
-        """このメッセージを表示します"""
+        """このメッセージを表示します
+        
+        __# 引数__
+        コマンド名
+        """
         if command == None:
             cogdict = {name:item for name,item in dict(self.bot.cogs).items() if name != "Jishaku"}
             

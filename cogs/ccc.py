@@ -11,12 +11,17 @@ class CCC(commands.Cog):
     
     @commands.command()
     async def ccc(self,ctx,message_id):
-        """集計します
-        引数:トリガーとするメッセージID
-        実行チャンネル内で数字の含まれるメッセージを取得し、ユーザー別に取得回数と数値の合計を集計します。
-        取得するのはトリガーに設定したメッセージまでで、遡ることのできる上限は300件です。
+        """チャンネルの履歴から集計します
+        
+        # 引数
+        トリガーとするメッセージID
+        
+        # 使い方
+        実行したチャンネルのメッセージ履歴からトリガーに指定したメッセージまで数字の含まれるメッセージを取得し、ユーザー別に取得回数と数値の合計を集計します。
+        遡ることのできる上限は300件です。
         !のついたメッセージは無視されます。
         """
+
         if not ctx.author.guild_permissions.administrator:
             return
         flag = "失敗"
@@ -50,7 +55,8 @@ class CCC(commands.Cog):
     
     @commands.command()
     async def ranking(self,ctx):
-        """集計したランキングを表示します"""
+        """サーバー内の所持通貨ランキングを表示します"""
+        
         with open("data/data.json") as f:
             d = json.load(f)
         d = dict(sorted(d[str(ctx.guild.id)].items(),key=lambda x:x[1]["num"],reverse=True))
@@ -68,10 +74,15 @@ class CCC(commands.Cog):
     
     @commands.command()
     async def set_count(self,ctx,userid,target,num):
-        """個別に値を設定します
-        引数:変更する項目(count or num),変更した後の値
+        """メンバーを指定し個別に値を設定します
+        
+        # 引数
+        変更する項目(回数:count,所持額:num), 変更した後の値
+        
+        # 使い方
         一つ目の引数に指定した項目の値を二つ目引数に指定した値に設定します。
         """
+
         if not ctx.author.guild_permissions.administrator:
             return
         if target not in ["num","count"]:
@@ -91,10 +102,15 @@ class CCC(commands.Cog):
 
     @commands.command(aliases=["cc"])
     async def count_control(self,ctx,userid,target,num):
-        """現在の値から足し引きします
-        引数:変更する項目(count or num),変更した後の値
+        """指定したメンバーの現在の値から足し引きします
+        
+        # 引数
+        変更するユーザーのid,変更する項目(回数:count,所持額:num), 変更した後の値
+        
+        # 使い方
         一つ目の引数に指定した項目の値に二つ目の引数に指定した値を足します。負の値も使えます。
         """
+
         if not ctx.author.guild_permissions.administrator:
             return
         if target not in ["num","count"]:
@@ -113,7 +129,12 @@ class CCC(commands.Cog):
     
     @commands.command()
     async def show(self,ctx,userid):
-        """個人の現在ポイントを表示します"""
+        """指定したメンバーの通貨に関するデータを表示します
+        
+        # 引数
+        表示するユーザーのid
+        """
+
         try:
             with open("data/data.json","r") as f:
                 d = json.load(f)
@@ -128,9 +149,10 @@ class CCC(commands.Cog):
     
     @commands.command()
     async def clear(self,ctx):
-        """集計したデータを削除します
-        実行可能:管理者権限のあるメンバー
-        実行されたサーバーの記録の全てを削除します。
+        """実行したサーバーの集計したデータを削除します
+        
+        # 実行可能
+        管理者権限のあるメンバー
         """
         if ctx.author.guild_permissions.administrator:
             with open("data/data.json","r") as f:
