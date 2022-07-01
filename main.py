@@ -12,7 +12,7 @@ TOKEN = environ["TOKEN"]
 
 intents = discord.Intents.default()
 
-bot = commands.Bot(command_prefix="s!",intents=intents,help_command=None)
+bot = commands.Bot(command_prefix="sc!",intents=intents,help_command=None)
 
 bot.load_extension("jishaku")
 

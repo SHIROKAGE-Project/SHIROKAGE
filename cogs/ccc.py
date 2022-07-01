@@ -4,6 +4,8 @@ from discord.ext import commands
 import re
 import json
 
+from module import dbmanager as dbm
+
 class CCC(commands.Cog):
     """仮想通貨機能"""
     def __init__(self,bot):
@@ -73,7 +75,7 @@ class CCC(commands.Cog):
         ))
     
     @commands.command()
-    async def set_count(self,ctx,userid,target,num):
+    async def set_count(self,ctx,member: discord.Member,money):
         """メンバーを指定し個別に値を設定します
         
         # 引数
@@ -85,19 +87,7 @@ class CCC(commands.Cog):
 
         if not ctx.author.guild_permissions.administrator:
             return
-        if target not in ["num","count"]:
-            await ctx.send("不明な引数")
-            return
-        with open("data/data.json","r") as f:
-            d = json.load(f)
-        try:
-            d[str(ctx.guild.id)][str(userid)][target] = int(num)
-        except:
-            await ctx.send("不明な引数")
-            return
-        with open("data/data.json","w") as f:
-            json.dump(d,f,indent=4)
-        await ctx.send("値を設定しました")
+        await ctx.send(member.id)
         
 
     @commands.command(aliases=["cc"])
@@ -163,6 +153,14 @@ class CCC(commands.Cog):
             await ctx.send("処理を完了しました")
             return
         await ctx.send("管理者権限のあるメンバーだけが実行できます")
+
+    @commands.command()
+    @commands.is_owner()
+    async def sql(self,ctx,*,sql):
+        if await dbm.change(sql):
+            await ctx.send("成功")
+        else:
+            await ctx.send("失敗")
 
 def setup(bot):
     return bot.add_cog(CCC(bot))
